@@ -1,0 +1,103 @@
+---
+title: "Titanic Survival Analysis"
+author: "MD.Mehedi,
+        Tanjena Akter Shefa,
+        Shahriyar Hoque Fihal"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## ***Introduction:***
+
+This report explores the survival patterns of passengers on the Titanic to determine whether key demographic and socio-economic factors influenced a person's likelihood of survival. Specifically, we construct contingency tables, generate bar charts, and perform Chi-square tests of independence to evaluate the impact of passenger sex and ticket class on survival outcomes.
+
+## ***SECTION 1: SETUP & DATA PREPARATION***
+
+## *Load the built-in Titanic dataset and convert it to a dataframe*
+
+```{r}
+titanic_df <- as.data.frame(Titanic)
+titanic_data <- titanic_df[rep(1:nrow(titanic_df), titanic_df$Freq), -5]
+rownames(titanic_data) <- NULL
+```
+
+## ***Section 2: Survival Analysis by sex***
+
+### ***2.1:Contingency Table:***
+
+The contingency table below shows the raw counts of survival broken down by gender.
+
+```{r}
+sex_table <- table(titanic_data$Sex, titanic_data$Survived)
+sex_table
+
+```
+
+### ***2.2: Visualisation:***
+
+The grouped bar plot below visually highlights the distribution of survivors and non-survivors across both sexes using base R graphics.
+
+```{r}
+plot_sex_table <- table(titanic_data$Survived, titanic_data$Sex)
+barplot(plot_sex_table, 
+        beside = TRUE, 
+        col = c("red", 'blue'), 
+        legend.text = c("No", "Yes"),
+        args.legend = list(x = "topright", title = "Survived"),
+        main = "Titanic Survival by Sex",
+        xlab = "Sex", 
+        ylab = "Passenger Count")
+       
+```
+
+### ***2.3: Chi-square Test of independence:***
+
+We test the null hypothesis ( Survival and Sex are completely independent) against the alternative hypothesis (Survival and Sex are dependent).
+
+```{r}
+chisq.test(sex_table)
+```
+
+Because the resulting p-value is extremely small . We reject the null hypothesis. There is strong, statistically significant evidence that survival on the Titanic was dependent on a passenger's sex.
+
+## ***Section 3: Survival Analysis by passenger class:***
+
+### ***3.1: Contingency Table:***
+
+The table below displays survival counts across the different ticket classes (1st, 2nd, 3rd, and Crew).
+
+```{r}
+class_table <- table(titanic_data$Class, titanic_data$Survived)
+class_table
+```
+
+### ***3.2: Visualization:***
+
+The following chart compares the number of survivors and non-survivors across all passenger classes.
+
+```{r}
+plot_class_table <- table(titanic_data$Survived, titanic_data$Class)
+
+barplot(plot_class_table, 
+        beside = TRUE, 
+        col = c("red", "blue"), 
+        legend.text = c("No", "Yes"),
+        args.legend = list(x = "topleft", title = "Survived"),
+        main = "Titanic Survival by Passenger Class",
+        xlab = "Class", 
+        ylab = "Passenger Count")
+```
+
+### ***3.3: Chi-square Test of independence:***
+
+We test the null hypothesis (Survival and Passenger Class are independent) against the alternative hypothesis (Survival and Passenger Class are dependent).
+
+```{r}
+chisq.test(class_table)
+```
+
+Because the p-value is so small (p \< 0.05), the test confirms that survival wasn't just random. The ticket class heavily influenced the chances of making it off the ship alive.
